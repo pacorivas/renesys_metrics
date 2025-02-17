@@ -10,6 +10,8 @@ SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source ${SCRIPT_DIR}/../library/common_vars.sh
 # logeo arguments: $1 (Info/Warning/Error) $2 (Info string) $3 SCREEN/EMAIL
 source ${SCRIPT_DIR}/../library/logging.sh
+# Load metrics functions
+source ${SCRIPT_DIR}/../library/metrics.sh
 
 # GLOBAL MySQL Variables
 get_mysql_params "${SCRIPT_DIR}/restore_metrics.json"
