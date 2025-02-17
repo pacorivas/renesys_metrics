@@ -33,7 +33,9 @@ parse_mysql_params "${SCRIPT_DIR}/restore_metrics.tpl" "${SCRIPT_DIR}/restore_me
 get_mysql_params "${SCRIPT_DIR}/restore_metrics.json"
 
 daemon_function() {
-  while true; do
+  while true
+  do
+    FECHA_LOG=$(date +"%Y%m%d")
     sleep 10
     # Save folder where dump files are for processing
     echo "${PARAM_FOLDER}" > "${SCRIPT_DIR}/restore_metrics_status"
@@ -56,7 +58,7 @@ daemon_function() {
                                        -e "SELECT COUNT(*) FROM cuadro_mandos.${TABLE_NAME} WHERE fecha BETWEEN '${RESTORE_DATE} 00:00:00' AND '${RESTORE_DATE} 23:59:59'" 2> /dev/null)
       if [[ "${RECORDS_IN_TABLE_NOW}" -gt 0 ]]
       then
-        logeon warning 0 " - There are records from this day on this table. Limpieza"
+        logeon warning 0 " - There are records from this day on this table. Cleaning Records"
         mysql -sN --host=${MYSQL_HOST} --port=${MYSQL_PORT} \
                   --user=${MYSQL_USER} --password=${MYSQL_PASS} \
                   -e "DELETE FROM cuadro_mandos.${TABLE_NAME} WHERE fecha BETWEEN '${RESTORE_DATE} 00:00:00' AND '${RESTORE_DATE} 23:59:59'" 2> /dev/null
@@ -84,3 +86,4 @@ daemon_function() {
 # Start the daemon
 daemon_function &
 echo $! > /var/run/mydaemon.pid
+echo $! > /var/run/restore_metrics.pid
