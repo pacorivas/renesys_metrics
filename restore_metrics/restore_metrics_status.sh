@@ -35,3 +35,4 @@ daemon_function() {
 # Start the daemon
 daemon_function &
 echo $! > /var/run/restore_metrics_status.pid
+wait

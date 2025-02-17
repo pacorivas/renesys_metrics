@@ -85,5 +85,5 @@ daemon_function() {
 
 # Start the daemon
 daemon_function &
-echo $! > /var/run/mydaemon.pid
 echo $! > /var/run/restore_metrics.pid
+wait
