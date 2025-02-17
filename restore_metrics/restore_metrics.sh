@@ -68,7 +68,7 @@ daemon_function() {
                 -e "REPLACE INTO cuadro_mandos.restore_metrics(file,restoration_table,restoration_date,info,restore_date_init,restore_date_end) VALUES ('${FILE_NAME}','${TABLE_NAME}','${RESTORE_DATE}','campo info','${INIT_DATE}','2000-01-01 00:00:00')" 2> /dev/null
       logeon info 0 "    - RESTORING records ..."
       mysql --host=${MYSQL_HOST} --port=${MYSQL_PORT} --user=${MYSQL_USER} --password=${MYSQL_PASS} ${MYSQL_DB} 2> /dev/null < "${PARAM_FOLDER}/${FILE_NAME}"
-      [[ "$?" -eq 0 ]] && logeon info 0 "      - RESTORE records was OK"
+      [[ "$?" -eq 0 ]] && logeon info 0 "      - RESTORE records was ${GRN}OK${END}"
       END_DATE=$(date '+%Y-%m-%d %H:%M:%S')
       mysql -sN --host=${MYSQL_HOST} --port=${MYSQL_PORT} \
                 --user=${MYSQL_USER} --password=${MYSQL_PASS} \
