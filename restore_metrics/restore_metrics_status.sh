@@ -26,7 +26,7 @@ do
   NUMBER_OF_INSERTS=$(grep "INSERT" ${STATUS_METRICS}/${PROCESING_FILE} |wc -l)
   TABLE=${PROCESING_FILE%%.*}
   NUMBER_INSERTED=$(mysql -sN  --host=${MYSQL_HOST} --port=${MYSQL_PORT} --user=${MYSQL_USER} --password=${MYSQL_PASS} -e "SELECT * FROM ${MYSQL_DB}.${TABLE}" 2> /dev/null |wc -l)
-  logeon_status "      Table: ${TABLE} --> ${NUMBER_INSERTED} / ${NUMBER_OF_INSERTS}"
+  logeon_status "      ----> Table: ${TABLE} --> ${NUMBER_INSERTED} / ${NUMBER_OF_INSERTS}"
   sleep 10
 done
 

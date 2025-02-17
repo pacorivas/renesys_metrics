@@ -22,10 +22,10 @@ source ${SCRIPT_DIR}/../library/metrics.sh
 #exit 0
 
 LOG_FILE_PARAM="YES"
-logeon info 2 ""
-logeon info 2 "parsing arguments"
 parse_args "$@"
 check_args_restore_data
+logeon info 2 ""
+logeon info 2 "parsing arguments"
 logeon info 0 ""
 
 # GLOBAL MySQL Variables
