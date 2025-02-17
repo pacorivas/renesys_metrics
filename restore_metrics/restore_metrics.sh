@@ -30,7 +30,7 @@ logeon info 0 ""
 
 # GLOBAL MySQL Variables
 parse_mysql_params "${SCRIPT_DIR}/restore_metrics.tpl" "${SCRIPT_DIR}/restore_metrics.json"
-
+get_mysql_params "${SCRIPT_DIR}/restore_metrics.json"
 
 daemon_function() {
   while true; do

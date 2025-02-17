@@ -19,6 +19,17 @@ function parse_mysql_params()
   [[ "${PARAM_SECRET}" != "" ]] && jq ".mysql_pass = \"${PARAM_SECRET}\"" "${PARAM_JSON_FILE}" > "${PARAM_JSON_FILE}.tmp" && mv "${PARAM_JSON_FILE}.tmp" "${PARAM_JSON_FILE}"
   [[ "${PARAM_DATABASE}" != "" ]] && jq ".mysql_db = \"${PARAM_DATABASE}\"" "${PARAM_JSON_FILE}" > "${PARAM_JSON_FILE}.tmp" && mv "${PARAM_JSON_FILE}.tmp" "${PARAM_JSON_FILE}"
 
+#  MYSQL_HOST=$(jq -r '.host' "${PARAM_JSON_FILE}")
+#  MYSQL_PORT=$(jq -r '.mysql_port' "${PARAM_JSON_FILE}")
+#  MYSQL_USER=$(jq -r '.mysql_user' "${PARAM_JSON_FILE}")
+#  MYSQL_PASS=$(jq -r '.mysql_pass' "${PARAM_JSON_FILE}")
+#  MYSQL_DB=$(jq -r '.mysql_db' "${PARAM_JSON_FILE}")
+}
+
+function get_mysql_params()
+{
+	local PARAM_JSON_FILE=${2}
+
   MYSQL_HOST=$(jq -r '.host' "${PARAM_JSON_FILE}")
   MYSQL_PORT=$(jq -r '.mysql_port' "${PARAM_JSON_FILE}")
   MYSQL_USER=$(jq -r '.mysql_user' "${PARAM_JSON_FILE}")
