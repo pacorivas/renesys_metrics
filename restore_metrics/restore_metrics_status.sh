@@ -11,16 +11,13 @@ source ${SCRIPT_DIR}/../library/common_vars.sh
 # logeo arguments: $1 (Info/Warning/Error) $2 (Info string) $3 SCREEN/EMAIL
 source ${SCRIPT_DIR}/../library/logging.sh
 
-LOGFILE="${SCRIPT_DIR}/restore_metrics_${FECHA_LOG}.log"
-
-MYSQL_HOST=$(jq -r '.host' "${SCRIPT_DIR}/restore_metrics.json")
-MYSQL_PORT=$(jq -r '.mysql_port' "${SCRIPT_DIR}/restore_metrics.json")
-MYSQL_USER=$(jq -r '.mysql_user' "${SCRIPT_DIR}/restore_metrics.json")
-MYSQL_PASS=$(jq -r '.mysql_pass' "${SCRIPT_DIR}/restore_metrics.json")
-MYSQL_DB=$(jq -r '.mysql_db' "${SCRIPT_DIR}/restore_metrics.json")
+# GLOBAL MySQL Variables
+get_mysql_params "${SCRIPT_DIR}/restore_metrics.json"
 
 while true
 do
+  FECHA_LOG=$(date +"%Y%m%d")
+  LOGFILE="${SCRIPT_DIR}/restore_metrics_${FECHA_LOG}.log"
   STATUS_METRICS=$(cat "${SCRIPT_DIR}/restore_metrics_status")
   [[ "${STATUS_METRICS}" == "inactive" ]] && { sleep 30; continue; }
   PROCESING_FILE=$(grep "\[File\]" ${LOGFILE} |tail -1 |awk '{print $4}')
