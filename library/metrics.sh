@@ -28,7 +28,7 @@ function parse_mysql_params()
 
 function get_mysql_params()
 {
-	local PARAM_JSON_FILE=${2}
+	local PARAM_JSON_FILE=${1}
 
   MYSQL_HOST=$(jq -r '.host' "${PARAM_JSON_FILE}")
   MYSQL_PORT=$(jq -r '.mysql_port' "${PARAM_JSON_FILE}")
