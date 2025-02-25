@@ -38,6 +38,14 @@ function parse_args(){
         shift
         PARAM_DATABASE="${1}"
         ;;
+      -b|--beginning)
+        shift
+        PARAM_BEGINNING="${1}"
+        ;;
+      --days)
+        shift
+        PARAM_DAYS="${1}"
+        ;;
       --help)
         PARAM_HELP="YES"
         ;;
@@ -45,7 +53,7 @@ function parse_args(){
         VERB_PARAM="YES"
         ;;
       *)
-        logeo info "Unknown option '$key'"
+        logeon info "Unknown option '$key'"
         ;;
     esac
     shift
@@ -72,12 +80,32 @@ function check_args_restore_data(){
 # Returns: writes to stdout usage
 function usage_restore_data() {
     LOGEO_SCREEN="YES"
-    [[ "${PARAM_HELP}" != "YES" ]] && logeo error "Parámetros incorrectos"
-    logeo info "Usage: $0 [ -p <PATH> ]"
-    logeo info ""
-    logeo info "[ OPTIONAL ]"
-    logeo info "  PATH: Path Directory where MySQL Dump Backups are."
-    logeo info ""
-    logeo info "Example: $0 -p /tmp"
+    [[ "${PARAM_HELP}" != "YES" ]] && logeon error 2 "Parámetros incorrectos"
+    logeon info 2 "Usage: $0 [ -p <PATH> ]"
+    logeon info 2 ""
+    logeon info 2 "[ OPTIONAL ]"
+    logeon info 2 "  PATH: Path Directory where MySQL Dump Backups are."
+    logeon info 2 ""
+    logeon info 2 "Example: $0 -p /tmp"
+    exit 101
+}
+
+function check_args_initial_restore() {
+  [[ ! "${PARAM_BEGINNING}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ || -z "${PARAM_DAYS}" ]] && usage_initial_restore
+  if [[ "${PARAM_HELP}" == "YES" ]]; then
+    usage_initial_restore
+  fi
+  [[ "${VERB_PARAM}" == "YES" ]] && { logeon info 2 ""; logeon info 2 "Ejecutando el script en modo verbose"; }
+}
+
+function usage_initial_restore() {
+    LOGEO_SCREEN="YES"
+    [[ "${PARAM_HELP}" != "YES" ]] && logeon error "Parámetros incorrectos"
+    logeon info 2 "Usage: $0 [ -p <PATH> ]"
+    logeon info 2 ""
+    logeon info 2 "[ OPTIONAL ]"
+    logeon info 2 "  PATH: Path Directory where MySQL Dump Backups are."
+    logeon info 2 ""
+    logeon info 2 "Example: $0 -p /tmp"
     exit 101
 }
