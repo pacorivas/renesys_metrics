@@ -40,6 +40,7 @@ for ((i = 0 ; i < ${PARAM_DAYS} ; i++)); do
 
   declare -a TABLES=("vhistoricos_int8") # COMENTAR. MODO TEST
   declare -a TABLES=("vhistoricos_uint64") # COMENTAR. MODO TEST
+  declare -a TABLES=("vhistoricos") # COMENTAR. MODO TEST
 
   for TABLE in "${TABLES[@]}"
   do
@@ -47,6 +48,7 @@ for ((i = 0 ; i < ${PARAM_DAYS} ; i++)); do
     [[ "$(uname)" != "Darwin" ]] && FECHA_FINAL=$(date -I -d "${DIA_BACKUP} - 1 day")
     logeon info 2 "DUMP de tabla ${YEL}${TABLE}${END} del día ${YEL}${DIA_BACKUP}${END}"
 #test_dump "${DIA_BACKUP}" "${TABLE}" # COMENTAR. MODO TEST
+#echo "PARAM: ${DIA_BACKUP} -- ${FECHA_FINAL} -- ${TABLE}"
     backup_day "${DIA_BACKUP}" "${TABLE}"
 [[ "$(uname)" == "Darwin" ]] && DIRECTORY=$(date -jf "%Y-%m-%d" "${DIA_BACKUP}" +"%Y-%m")
 [[ "$(uname)" != "Darwin" ]] && DIRECTORY=$(date --date="${DIA_BACKUP}" "+%Y-%m")
@@ -71,4 +73,3 @@ exit 0
 
 # START_DAY=$(date +%Y-%m-%d)
 # START_DAY="2024-11-20"
-

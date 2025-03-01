@@ -42,6 +42,9 @@ function backup_day()
   local FECHA_INICIO="${1}"
   local TABLA="${2}"
 
+  [[ "$(uname)" == "Darwin" ]] && FECHA_FINAL=$(date -j -v +1d -f "%Y-%m-%d" "${DIA_BACKUP}" +%Y-%m-%d)
+  [[ "$(uname)" != "Darwin" ]] && FECHA_FINAL=$(date -I -d "${DIA_BACKUP} + 1 day")
+
   [[ "$(uname)" == "Darwin" ]] && DIRECTORY=$(date -jf "%Y-%m-%d" "${FECHA_INICIO}" +"%Y-%m")
   [[ "$(uname)" != "Darwin" ]] && DIRECTORY=$(date --date="${FECHA_INICIO}" "+%Y-%m")
   mkdir -p ${DIRECTORY}
@@ -51,19 +54,18 @@ function backup_day()
   if [[ "${AHORA}" == "${FECHA_INICIO}" ]]; then
       echo "Backup mismo dia" > "${ARCHIVO}.DiaIncompleto.txt"
   fi
-  #echo "mysqldump --defaults-file=bbdd.cnf --defaults-group-suffix=_tabla --order-by-primary cuadro_mandos $TABLA --where=\"fecha>=\'$FECHA_INICIO\' AND fecha\<\'$FECHA_FIN\'\" | grep -v \"^LOCK TABLES\" | grep -v \"^UNLOCK TABLES\" | gzip -9c > $FECHA_INICIO/$TABLA.$FECHA_INICIO.$FECHA_FIN.sql.gz"
   logeon info 2 "Haciendo DUMP de la Tabla ${YEL}${TABLA}${END} en la fecha ${YEL}${FECHA_INICIO}${END}"
   sleep 1
   start=$(date +%s)
+#echo "${FECHA_INICIO} -- ${FECHA_FINAL}"
   mysqldump --defaults-file=bbdd.cnf \
             --defaults-group-suffix=_master \
-              --no-create-info \
-              --insert-ignore \
-              --skip-extended-insert \
-              --order-by-primary \
+            --no-create-info \
+            --insert-ignore \
+            --skip-extended-insert \
+            --order-by-primary \
             cuadro_mandos ${TABLA} \
-            --where="date(fecha)>=${FECHA_INICIO}" \
-            > ${ARCHIVO}
+            --where="fecha>='$FECHA_INICIO' AND fecha<'$FECHA_FINAL'" > ${ARCHIVO}
   retVal=$?
   if [ ${retVal} -ne 0 ]; then
     logeon error 2 "Fallo al hacer DUMP de la tabla ${YEL}${TABLA}${END} en el día ${YEL}${FECHA_INICIO}${END}"
@@ -89,7 +91,7 @@ function restore_day()
   logeon info 2 "Restaurando la Tabla ${YEL}${TABLA}${END} en la fecha ${YEL}${FECHA_INICIO}${END}"
   #echo "mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < $DIA_BACKUP/cuadro_mandos_procedures.sql"
   start=$(date +%s)
-  mysql --defaults-file=bbdd.cnf cuadro_mandos_new < "${ARCHIVO}"
+  mysql --defaults-file=bbdd.cnf cuadro_mandos < "${ARCHIVO}"
   retVal=$?
   if [ ${retVal} -ne 0 ]; then
     logeon error 2 "Fallo al Restaurar la tabla ${YEL}${TABLA}${END} en el día ${YEL}${FECHA_INICIO}${END}"
@@ -100,6 +102,8 @@ function restore_day()
     runtime=$((end-start))
     logeon info 2 "  - Restauración de la ${TABLA} en la fecha ${FECHA_INICIO} requiere ${GRN}${BOLD}${runtime} segundos${END}"
     echo "true" > "${DIRECTORY}/status_table.txt"
+    logeon info 2 "  - Comprimiendo archivo DUMP ${YEL}${ARCHIVO}${END}"
+    gzip -f9 "${SCRIPT_DIR}/${ARCHIVO}" > "${SCRIPT_DIR}/${ARCHIVO}.gz"
   fi
   # logeon info 2 ""
 }
