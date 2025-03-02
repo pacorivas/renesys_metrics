@@ -24,8 +24,9 @@ declare -a TABLES=("vhistoricos" "vhistoricos_bool" "vhistoricos_float" \
                     "vhistoricos_int16" "vhistoricos_int32" "vhistoricos_int64" \
                     "vhistoricos_int8" "vhistoricos_uint16" "vhistoricos_uint32" \
                     "vhistoricos_uint64" "vhistoricos_uint8")
-declare -a TABLES=("vhistoricos") # COMENTAR. MODO TEST
+#declare -a TABLES=("vhistoricos") # COMENTAR. MODO TEST
 
+LOG_FILE_PARAM="YES"
 parse_args "$@"
 check_args_initial_restore
 logeon info 2 ""
