@@ -77,7 +77,7 @@ do
     if [[ "${BACKUP_STATUS}" != "false" ]]
     then
       END_DATE=$(date '+%Y-%m-%d %H:%M:%S')
-      save_begin "${DIRECTORY}/${TABLE}.${FECHA_INICIAL}.sql" "${TABLE}" "${FECHA_INICIAL}" "${INIT_DATE}" "${END_DATE}"
+      save_end "${DIRECTORY}/${TABLE}.${FECHA_INICIAL}.sql" "${TABLE}" "${FECHA_INICIAL}" "${INIT_DATE}" "${END_DATE}"
       restore_day "${FECHA_INICIAL}" "${TABLE}" "${DIRECTORY}"
     fi
 #test_restore "${DIA_BACKUP}" "${TABLE}" # COMENTAR. MODO TEST
