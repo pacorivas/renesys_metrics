@@ -42,6 +42,14 @@ function parse_args(){
         shift
         PARAM_BEGINNING="${1}"
         ;;
+      --from-date)
+        shift
+        PARAM_FROM_DATE="${1}"
+        ;;
+      --to-date)
+        shift
+        PARAM_TO_DATE="${1}"
+        ;;
       --days)
         shift
         PARAM_DAYS="${1}"
@@ -91,7 +99,7 @@ function usage_restore_data() {
 }
 
 function check_args_initial_restore() {
-  [[ ! "${PARAM_BEGINNING}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ || -z "${PARAM_DAYS}" ]] && usage_initial_restore
+  [[ ! "${PARAM_FROM_DATE}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ || ! "${PARAM_TO_DATE}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] && usage_initial_restore
   if [[ "${PARAM_HELP}" == "YES" ]]; then
     usage_initial_restore
   fi

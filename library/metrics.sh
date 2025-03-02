@@ -40,24 +40,20 @@ function get_mysql_params()
 function backup_day()
 {
   local FECHA_INICIO="${1}"
-  local TABLA="${2}"
+  local FECHA_FIN="${2}"
+  local TABLA="${3}"
+  local DIRECTORY="${4}"
 
-  [[ "$(uname)" == "Darwin" ]] && FECHA_FINAL=$(date -j -v +1d -f "%Y-%m-%d" "${DIA_BACKUP}" +%Y-%m-%d)
-  [[ "$(uname)" != "Darwin" ]] && FECHA_FINAL=$(date -I -d "${DIA_BACKUP} + 1 day")
-
-  [[ "$(uname)" == "Darwin" ]] && DIRECTORY=$(date -jf "%Y-%m-%d" "${FECHA_INICIO}" +"%Y-%m")
-  [[ "$(uname)" != "Darwin" ]] && DIRECTORY=$(date --date="${FECHA_INICIO}" "+%Y-%m")
   mkdir -p ${DIRECTORY}
   echo "false" > "${DIRECTORY}/status_table.txt"
   ARCHIVO="${DIRECTORY}/${TABLA}.${FECHA_INICIO}.sql"
-  AHORA=$(date +%Y-%m-%d)
-  if [[ "${AHORA}" == "${FECHA_INICIO}" ]]; then
-      echo "Backup mismo dia" > "${ARCHIVO}.DiaIncompleto.txt"
-  fi
-  logeon info 2 "Haciendo DUMP de la Tabla ${YEL}${TABLA}${END} en la fecha ${YEL}${FECHA_INICIO}${END}"
-  sleep 1
+#AHORA=$(date +%Y-%m-%d)
+#if [[ "${AHORA}" == "${FECHA_INICIO}" ]]; then
+#echo "Backup mismo dia" > "${ARCHIVO}.DiaIncompleto.txt"
+#fi
+  logeon info 2 "  - Haciendo DUMP de la Tabla ${YEL}${TABLA}${END} en la fecha ${YEL}${FECHA_INICIO}${END} en el directorio ${YEL}${DIRECTORY}${END}"
   start=$(date +%s)
-#echo "${FECHA_INICIO} -- ${FECHA_FINAL}"
+#echo "${FECHA_INICIO} -- ${FECHA_FIN}"
   mysqldump --defaults-file=bbdd.cnf \
             --defaults-group-suffix=_master \
             --no-create-info \
@@ -65,7 +61,7 @@ function backup_day()
             --skip-extended-insert \
             --order-by-primary \
             cuadro_mandos ${TABLA} \
-            --where="fecha>='$FECHA_INICIO' AND fecha<'$FECHA_FINAL'" > ${ARCHIVO}
+            --where="fecha>='$FECHA_INICIO' AND fecha<'$FECHA_FIN'" > ${ARCHIVO}
   retVal=$?
   if [ ${retVal} -ne 0 ]; then
     logeon error 2 "Fallo al hacer DUMP de la tabla ${YEL}${TABLA}${END} en el día ${YEL}${FECHA_INICIO}${END}"
@@ -83,12 +79,14 @@ function restore_day()
 {
   local FECHA_INICIO="${1}"
   local TABLA="${2}"
+  local DIRECTORY="${3}"
 
-  [[ "$(uname)" == "Darwin" ]] && DIRECTORY=$(date -jf "%Y-%m-%d" "${FECHA_INICIO}" +"%Y-%m")
-  [[ "$(uname)" != "Darwin" ]] && DIRECTORY=$(date --date="${FECHA_INICIO}" "+%Y-%m")
+#  [[ "$(uname)" == "Darwin" ]] && DIRECTORY=$(date -jf "%Y-%m-%d" "${FECHA_INICIO}" +"%Y-%m")
+#  [[ "$(uname)" != "Darwin" ]] && DIRECTORY=$(date --date="${FECHA_INICIO}" "+%Y-%m")
   ARCHIVO="${DIRECTORY}/${TABLA}.${FECHA_INICIO}.sql"
 
   logeon info 2 "Restaurando la Tabla ${YEL}${TABLA}${END} en la fecha ${YEL}${FECHA_INICIO}${END}"
+  logeon info 2 "  - Restaurando fichero ${YEL}${BOLD}${ARCHIVO}${END}"
   #echo "mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < $DIA_BACKUP/cuadro_mandos_procedures.sql"
   start=$(date +%s)
   mysql --defaults-file=bbdd.cnf cuadro_mandos < "${ARCHIVO}"
@@ -108,6 +106,23 @@ function restore_day()
   # logeon info 2 ""
 }
 
+function epoch_date()
+{
+  local DATE_INICIAL="${1}"
+  local DATE_FINAL="${2}"
+
+  if [[ "$(uname)" == "Darwin" ]]
+  then
+    EPOCH_INICIAL=$(date -j -f "%Y-%m-%d" "${DATE_INICIAL}" +%s 2> /dev/null)
+    EPOCH_FINAL=$(date -j -f "%Y-%m-%d" "${DATE_FINAL}" +%s 2> /dev/null)
+  fi
+  if [[ "$(uname)" != "Darwin" ]]
+  then
+    EPOCH_INICIAL=$(date --date="${DATE_INICIAL}" +"%s" 2> /dev/null)
+    EPOCH_FINAL=$(date --date="${DATE_FINAL}" +"%s" 2> /dev/null)
+  fi
+
+}
 #  echo "mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < $DIA_BACKUP/cuadro_mandos_procedures.sql"
 #  mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < $DIA_BACKUP/cuadro_mandos_procedures.sql
 #  echo "mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < CreateTableHistoricos.sql"
