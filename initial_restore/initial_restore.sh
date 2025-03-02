@@ -69,16 +69,23 @@ do
   do
     logeon info 2 "TABLA: ${GRN}${BOLD}${TABLE}${END}"
 #test_dump "${DIA_BACKUP}" "${TABLE}" # COMENTAR. MODO TEST
+    INIT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+    save_begin "${DIRECTORY}/${TABLE}.${FECHA_INICIAL}.sql" "${TABLE}" "${FECHA_INICIAL}" "${INIT_DATE}"
     backup_day "${FECHA_INICIAL}" "${FECHA_FINAL}" "${TABLE}" "${DIRECTORY}"
     BACKUP_STATUS=$(cat "${DIRECTORY}/status_table.txt")
-    [[ "${BACKUP_STATUS}" != "false" ]] && restore_day "${FECHA_INICIAL}" "${TABLE}" "${DIRECTORY}"
+    if [[ "${BACKUP_STATUS}" != "false" ]]
+    then
+      END_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+      save_begin "${DIRECTORY}/${TABLE}.${FECHA_INICIAL}.sql" "${TABLE}" "${FECHA_INICIAL}" "${INIT_DATE}" "${END_DATE}"
+      restore_day "${FECHA_INICIAL}" "${TABLE}" "${DIRECTORY}"
+    fi
 #test_restore "${DIA_BACKUP}" "${TABLE}" # COMENTAR. MODO TEST
     logeon info 2 "==============================================================================================="
   done # for TABLE
   [[ "${FECHA_INICIAL}" == "${FECHA_HASTA}" ]] && break
   [[ "$(uname)" == "Darwin" ]] && FECHA_INICIAL=$(date -j -v -1d -f "%Y-%m-%d" "${FECHA_INICIAL}" +%Y-%m-%d)
   [[ "$(uname)" != "Darwin" ]] && FECHA_INICIAL=$(date -I -d "${FECHA_INICIAL} - 1 day")
-  FECHA_INICIAL="${FECHA_FINAL}"
+  # FECHA_INICIAL="${FECHA_FINAL}"
 done # while true
 
 exit 0

@@ -123,6 +123,36 @@ function epoch_date()
   fi
 
 }
+
+function save_begin()
+{
+  local FILE_NAME="${1}"
+  local TABLE_NAME="${2}"
+  local RESTORE_DATE="${3}"
+  local INIT_DATE="${4}"
+
+  #INIT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+  mysql \
+    --defaults-file=bbdd.cnf \
+    cuadro_mandos \
+    -e "REPLACE INTO cuadro_mandos.restore_metrics(file,restoration_table,restoration_date,info,restore_date_init,restore_date_end) VALUES ('${FILE_NAME}','${TABLE_NAME}','${RESTORE_DATE}','campo info','${INIT_DATE}','2000-01-01 00:00:00')"
+}
+function save_end()
+{
+  local FILE_NAME="${1}"
+  local TABLE_NAME="${2}"
+  local RESTORE_DATE="${3}"
+  local INIT_DATE="${4}"
+  local END_DATE="${5}"
+
+  #END_DATE=$(date '+%Y-%m-%d %H:%M:%S')
+  mysql \
+    --defaults-file=bbdd.cnf \
+    cuadro_mandos \
+    -e "REPLACE INTO cuadro_mandos.restore_metrics(file,restoration_table,restoration_date,info,restore_date_init,restore_date_end) VALUES ('${FILE_NAME}','${TABLE_NAME}','${RESTORE_DATE}','campo info','${INIT_DATE}','${END_DATE}')" 2> /dev/null
+}
+
+
 #  echo "mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < $DIA_BACKUP/cuadro_mandos_procedures.sql"
 #  mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < $DIA_BACKUP/cuadro_mandos_procedures.sql
 #  echo "mysql --defaults-file=bbdd.cnf --defaults-group-suffix=_restore cuadro_mandos < CreateTableHistoricos.sql"
